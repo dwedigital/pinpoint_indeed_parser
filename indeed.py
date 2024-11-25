@@ -1,25 +1,32 @@
 import requests
 from lxml import etree
-import sys
 from datetime import datetime
 import glob
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class IndeedFeed:
-    def __init__(self):
-        self.url = "https://app.pinpointhq.com/indeed_feed.xml"
+    def __init__(self, test=False):
+
+        self.url = os.getenv("INDEED_FEED_URL")
+        self.test_file_path = "mock_indeed_feed.xml"
+        self.test = test
 
     def write_feed(self):
         if self.__need_new_feed():
             self.__clean_up_files()
 
-        response = requests.get(self.url, stream=True)
-        current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+            response = requests.get(self.url, stream=True)
+            current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
-        with open(f"indeed_feed_{current_time}.xml", "wb") as f:
-            for chunk in response.iter_content(chunk_size=1024 * 1024):
-                f.write(chunk)
+            with open(f"indeed_feed_{current_time}.xml", "wb") as f:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):
+                    f.write(chunk)
+        else:
+            return
 
     def find_client_jobs(self, client_name=None, fuzzy_search=False) -> list:
         jobs = []
@@ -51,8 +58,7 @@ class IndeedFeed:
 
     def find_job_by_reference(self, reference) -> dict:
         # Parse the XML file and find job by reference
-        tree = self.__parse_xml()
-        root = tree.getroot()
+        root = self.__parse_xml()
         for job in root.iter("job"):
             if reference in job.find("referencenumber").text:
                 return {
@@ -71,17 +77,23 @@ class IndeedFeed:
         }
 
     def __parse_xml(self):
-        # Find the file with the latest date
-        files = glob.glob("indeed_feed_*.xml")
-        if files:
-            latest_file = max(files, key=os.path.getctime)
+        if self.test:
+            tree = etree.parse(self.test_file_path)
+            root = tree.getroot()
+            return root
+
         else:
-            self.write_feed()
+            # Find the file with the latest date
             files = glob.glob("indeed_feed_*.xml")
-            latest_file = max(files, key=os.path.getctime)
-        tree = etree.parse(latest_file)
-        root = tree.getroot()
-        return root
+            if files:
+                latest_file = max(files, key=os.path.getctime)
+            else:
+                self.write_feed()
+                files = glob.glob("indeed_feed_*.xml")
+                latest_file = max(files, key=os.path.getctime)
+            tree = etree.parse(latest_file)
+            root = tree.getroot()
+            return root
 
     def __clean_up_files(self):
         # get an array of any files with the following format: indeed_feed_*.xml
@@ -101,3 +113,6 @@ class IndeedFeed:
             )
             if time_difference.total_seconds() > 3600:
                 return True
+        elif not files:
+            return True
+        return False

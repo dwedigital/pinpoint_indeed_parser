@@ -11,6 +11,13 @@ import sys
 #         IndeedFeed().write_feed()
 
 
+def pretty_print(jobs):
+    for job in jobs:
+        print(
+            f"Company: {job['Company']}\nJob Reference: {job['Job Reference']}\nJob Title: {job['Job Title']}\n"
+        )
+
+
 if __name__ == "__main__":
 
     Indeed = IndeedFeed()
@@ -27,7 +34,7 @@ if __name__ == "__main__":
                     jobs = Indeed.find_client_jobs(client_name, True)
                 else:
                     jobs = Indeed.find_client_jobs(client_name)
-                print(f"Total: {len(jobs)}\n\n{jobs}\n")
+                pretty_print(jobs)
             except IndexError:
                 print("Please provide a client name")
         elif option.lower() == "ref":
