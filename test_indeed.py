@@ -3,8 +3,6 @@ from indeed import IndeedFeed
 import glob
 import os
 from lxml import etree
-import pytest
-
 
 class TestIndeed(unittest.TestCase):
 
