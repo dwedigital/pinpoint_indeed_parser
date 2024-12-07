@@ -14,9 +14,12 @@ class IndeedFeed:
         self.url = os.getenv("INDEED_FEED_URL")
         self.test_file_path = "mock_indeed_feed.xml"
         self.test = test
+        self.write_feed()
 
     def write_feed(self):
+        print(self.__need_new_feed())
         if self.__need_new_feed():
+            
             self.__clean_up_files()
 
             response = requests.get(self.url, stream=True)
