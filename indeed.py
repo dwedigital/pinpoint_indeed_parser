@@ -18,11 +18,9 @@ class IndeedFeed:
         self.write_feed()
 
     def write_feed(self):
-        print(self.__need_new_feed())
+
         if self.__need_new_feed():
-
             self.__clean_up_files()
-
             response = requests.get(self.url, stream=True)
             current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
@@ -35,13 +33,14 @@ class IndeedFeed:
     def find_client_or_source_jobs(
         self, client_name=None, fuzzy_search=False, sourceName=False
     ) -> list:
-        jobs = []
-        # Parse the XML file and find jobs for the client
 
+        jobs = []
+
+        # Parse the XML file and find jobs for the client
         root = self.__parse_xml()
         for job in root.iter("job"):
-
             if fuzzy_search:
+                # Search by source name
                 if sourceName:
                     if (
                         client_name.lower() in job.find("sourcename").text.lower()
@@ -50,14 +49,9 @@ class IndeedFeed:
                         or client_name.lower().replace(" ", "")
                         in job.find("sourcename").text.lower()
                     ):
-                        jobs.append(
-                            {
-                                "Source": job.find("sourcename").text,
-                                "Company": job.find("company").text,
-                                "Job Reference": job.find("referencenumber").text,
-                                "Job Title": job.find("title").text,
-                            }
-                        )
+                        jobs.append(self.__pluck_simple(job))
+
+                # Search by company name
                 else:
 
                     if (
@@ -67,37 +61,16 @@ class IndeedFeed:
                         or client_name.lower().replace(" ", "")
                         in job.find("company").text.lower()
                     ):
-                        jobs.append(
-                            {
-                                "Source": job.find("sourcename").text,
-                                "Company": job.find("company").text,
-                                "Job Reference": job.find("referencenumber").text,
-                                "Job Title": job.find("title").text,
-                            }
-                        )
+                        jobs.append(self.__pluck_simple(job))
 
             else:
-
+                # Use exact match in searching (still case insensitive)
                 if sourceName:
                     if client_name.lower() == job.find("sourcename").text.lower():
-                        jobs.append(
-                            {
-                                "Source": job.find("sourcename").text,
-                                "Company": job.find("company").text,
-                                "Job Reference": job.find("referencenumber").text,
-                                "Job Title": job.find("title").text,
-                            }
-                        )
+                        jobs.append(self.__pluck_simple(job))
 
                     if client_name.lower() == job.find("company").text.lower():
-                        jobs.append(
-                            {
-                                "Source": job.find("sourcename").text,
-                                "Company": job.find("company").text,
-                                "Job Reference": job.find("referencenumber").text,
-                                "Job Title": job.find("title").text,
-                            }
-                        )
+                        jobs.append(self.__pluck_simple(job))
 
         return jobs
 
@@ -106,40 +79,9 @@ class IndeedFeed:
         root = self.__parse_xml()
         for job in root.iter("job"):
             if reference in job.find("referencenumber").text:
+                print("found")
 
-                return {
-                    "Company": (
-                        job.find("company").text
-                        if job.find("company") is not None
-                        else ""
-                    ),
-                    "Job Reference": (
-                        job.find("referencenumber").text
-                        if job.find("referencenumber") is not None
-                        else ""
-                    ),
-                    "Job Title": (
-                        job.find("title").text if job.find("title") is not None else ""
-                    ),
-                    "Salary": (
-                        job.find("salary").text
-                        if job.find("salary") is not None
-                        else ""
-                    ),
-                    "Job Description": (
-                        job.find("description").text
-                        if job.find("description") is not None
-                        else ""
-                    ),
-                    "Email": (
-                        job.find("email").text if job.find("email") is not None else ""
-                    ),
-                    "Apply Data": (
-                        job.find("indeed-apply-data").text
-                        if job.find("indeed-apply-data") is not None
-                        else ""
-                    ),
-                }
+                return self.__pluck_full(job)
 
         return {"message": "Job not found"}
 
@@ -192,3 +134,52 @@ class IndeedFeed:
         elif not files:
             return True
         return False
+
+    def __pluck_simple(self, job: etree.Element) -> dict:
+        return {
+            "Source": (
+                job.find("sourcename").text
+                if job.find("sourcename") is not None
+                else ""
+            ),
+            "Company": (
+                job.find("company").text if job.find("company") is not None else ""
+            ),
+            "Job Reference": (
+                job.find("referencenumber").text
+                if job.find("referencenumber") is not None
+                else ""
+            ),
+            "Job Title": (
+                job.find("title").text if job.find("title") is not None else ""
+            ),
+        }
+
+    def __pluck_full(self, job) -> dict:
+        return {
+            "Company": (
+                job.find("company").text if job.find("company") is not None else ""
+            ),
+            "Job Reference": (
+                job.find("referencenumber").text
+                if job.find("referencenumber") is not None
+                else ""
+            ),
+            "Job Title": (
+                job.find("title").text if job.find("title") is not None else ""
+            ),
+            "Salary": (
+                job.find("salary").text if job.find("salary") is not None else ""
+            ),
+            "Job Description": (
+                job.find("description").text
+                if job.find("description") is not None
+                else ""
+            ),
+            "Email": (job.find("email").text if job.find("email") is not None else ""),
+            "Apply Data": (
+                job.find("indeed-apply-data").text
+                if job.find("indeed-apply-data") is not None
+                else ""
+            ),
+        }
