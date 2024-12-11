@@ -4,14 +4,12 @@ from datetime import datetime
 import glob
 import os
 from dotenv import load_dotenv
-from collections import OrderedDict
 
 load_dotenv()
 
 
 class IndeedFeed:
     def __init__(self, test=False):
-
         self.url = os.getenv("INDEED_FEED_URL")
         self.test_file_path = "mock_indeed_feed.xml"
         self.test = test
