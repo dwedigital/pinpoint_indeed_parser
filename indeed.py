@@ -4,6 +4,7 @@ from datetime import datetime
 import glob
 import os
 from dotenv import load_dotenv
+from collections import OrderedDict
 
 load_dotenv()
 
@@ -19,7 +20,7 @@ class IndeedFeed:
     def write_feed(self):
         print(self.__need_new_feed())
         if self.__need_new_feed():
-            
+
             self.__clean_up_files()
 
             response = requests.get(self.url, stream=True)
@@ -31,7 +32,9 @@ class IndeedFeed:
         else:
             return
 
-    def find_client_jobs(self, client_name=None, fuzzy_search=False) -> list:
+    def find_client_or_source_jobs(
+        self, client_name=None, fuzzy_search=False, sourceName=False
+    ) -> list:
         jobs = []
         # Parse the XML file and find jobs for the client
 
@@ -39,23 +42,62 @@ class IndeedFeed:
         for job in root.iter("job"):
 
             if fuzzy_search:
-                if client_name.lower() in job.find("company").text.lower():
-                    jobs.append(
-                        {
-                            "Company": job.find("company").text,
-                            "Job Reference": job.find("referencenumber").text,
-                            "Job Title": job.find("title").text,
-                        }
-                    )
+                if sourceName:
+                    if (
+                        client_name.lower() in job.find("sourcename").text.lower()
+                        or client_name.lower()
+                        in job.find("sourcename").text.lower().replace(" ", "")
+                        or client_name.lower().replace(" ", "")
+                        in job.find("sourcename").text.lower()
+                    ):
+                        jobs.append(
+                            {
+                                "Source": job.find("sourcename").text,
+                                "Company": job.find("company").text,
+                                "Job Reference": job.find("referencenumber").text,
+                                "Job Title": job.find("title").text,
+                            }
+                        )
+                else:
+
+                    if (
+                        client_name.lower() in job.find("company").text.lower()
+                        or client_name.lower()
+                        in job.find("company").text.lower().replace(" ", "")
+                        or client_name.lower().replace(" ", "")
+                        in job.find("company").text.lower()
+                    ):
+                        jobs.append(
+                            {
+                                "Source": job.find("sourcename").text,
+                                "Company": job.find("company").text,
+                                "Job Reference": job.find("referencenumber").text,
+                                "Job Title": job.find("title").text,
+                            }
+                        )
 
             else:
-                if client_name.lower() == job.find("company").text.lower():
-                    jobs.append(
-                        {
-                            "Job Reference": job.find("referencenumber").text,
-                            "Job Title": job.find("title").text,
-                        }
-                    )
+
+                if sourceName:
+                    if client_name.lower() == job.find("sourcename").text.lower():
+                        jobs.append(
+                            {
+                                "Source": job.find("sourcename").text,
+                                "Company": job.find("company").text,
+                                "Job Reference": job.find("referencenumber").text,
+                                "Job Title": job.find("title").text,
+                            }
+                        )
+
+                    if client_name.lower() == job.find("company").text.lower():
+                        jobs.append(
+                            {
+                                "Source": job.find("sourcename").text,
+                                "Company": job.find("company").text,
+                                "Job Reference": job.find("referencenumber").text,
+                                "Job Title": job.find("title").text,
+                            }
+                        )
 
         return jobs
 
@@ -64,10 +106,41 @@ class IndeedFeed:
         root = self.__parse_xml()
         for job in root.iter("job"):
             if reference in job.find("referencenumber").text:
+
                 return {
-                    "Job Reference": job.find("referencenumber").text,
-                    "Job Title": job.find("title").text,
+                    "Company": (
+                        job.find("company").text
+                        if job.find("company") is not None
+                        else ""
+                    ),
+                    "Job Reference": (
+                        job.find("referencenumber").text
+                        if job.find("referencenumber") is not None
+                        else ""
+                    ),
+                    "Job Title": (
+                        job.find("title").text if job.find("title") is not None else ""
+                    ),
+                    "Salary": (
+                        job.find("salary").text
+                        if job.find("salary") is not None
+                        else ""
+                    ),
+                    "Job Description": (
+                        job.find("description").text
+                        if job.find("description") is not None
+                        else ""
+                    ),
+                    "Email": (
+                        job.find("email").text if job.find("email") is not None else ""
+                    ),
+                    "Apply Data": (
+                        job.find("indeed-apply-data").text
+                        if job.find("indeed-apply-data") is not None
+                        else ""
+                    ),
                 }
+
         return {"message": "Job not found"}
 
     def feed_stats(self):

@@ -2,6 +2,7 @@
 
 from indeed import IndeedFeed
 import sys
+import pprint
 
 
 # Removing for now as have a better way to handle this in the IndeedFeed class
@@ -29,11 +30,20 @@ if __name__ == "__main__":
         if option.lower() == "client":
             try:
                 client_name = input("Enter client name: ").lower()
+                # Fuzzy search means that the client name can be a substring of the company/source name
                 search_type = input("Do you want to do a fuzzy search? (y/n): ").lower()
-                if search_type == "y":
-                    jobs = Indeed.find_client_jobs(client_name, True)
+                # Client type allows us to search by indivudal client or source (useful if our client is a RPO/Recruiter with multiple clients)
+                client_type = input(
+                    "Do you want to search by source name? (y/n): "
+                ).lower()
+                if search_type == "y" and client_type == "y":
+                    jobs = Indeed.find_client_or_source_jobs(client_name, True, True)
+                elif search_type == "y" and client_type == "n":
+                    jobs = Indeed.find_client_or_source_jobs(client_name, True)
+                elif search_type == "n" and client_type == "y":
+                    jobs = Indeed.find_client_or_source_jobs(client_name, False, True)
                 else:
-                    jobs = Indeed.find_client_jobs(client_name)
+                    jobs = Indeed.find_client_or_source_jobs(client_name)
                 pretty_print(jobs)
             except IndexError:
                 print("Please provide a client name")
@@ -41,7 +51,7 @@ if __name__ == "__main__":
             try:
                 reference = input("Enter reference number: ").lower()
                 job = Indeed.find_job_by_reference(reference)
-                print(job)
+                pprint.pprint(job, sort_dicts=False, underscore_numbers=True)
             except IndexError:
                 print("Please provide a reference number")
 
