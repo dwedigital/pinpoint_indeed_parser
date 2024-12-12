@@ -5,13 +5,6 @@ import sys
 import pprint
 
 
-# Removing for now as have a better way to handle this in the IndeedFeed class
-# def ask_write():
-#     write = input("Do you want to re-create the feed file? (y/n): ")
-#     if write.lower() == "y":
-#         IndeedFeed().write_feed()
-
-
 if __name__ == "__main__":
 
     Indeed = IndeedFeed()
@@ -38,6 +31,7 @@ if __name__ == "__main__":
                     jobs = Indeed.find_client_or_source_jobs(client_name, False, True)
                 else:
                     jobs = Indeed.find_client_or_source_jobs(client_name)
+
                 pprint.pprint(jobs, sort_dicts=False, underscore_numbers=True)
 
                 write = input(
@@ -50,9 +44,10 @@ if __name__ == "__main__":
                         f.write(",".join(headers) + "\n")
                         for job in jobs:
                             for k, v in job.items():
-                                # remove any commas in the values
+                                # remove any commas in the values ottherwise they will be treated as separate columns
                                 v = v.replace(",", "")
                                 f.write(f"{v},")
+                            # add a new line after each job to create a new row
                             f.write("\n")
 
                 else:
