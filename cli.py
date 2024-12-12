@@ -12,13 +12,6 @@ import pprint
 #         IndeedFeed().write_feed()
 
 
-def pretty_print(jobs):
-    for job in jobs:
-        print(
-            f"Company: {job['Company']}\nJob Reference: {job['Job Reference']}\nJob Title: {job['Job Title']}\n"
-        )
-
-
 if __name__ == "__main__":
 
     Indeed = IndeedFeed()
@@ -28,6 +21,7 @@ if __name__ == "__main__":
         # get the option they want to search by
         option = sys.argv[1]
         if option.lower() == "client":
+            jobs = []
             try:
                 client_name = input("Enter client name: ").lower()
                 # Fuzzy search means that the client name can be a substring of the company/source name
@@ -44,7 +38,27 @@ if __name__ == "__main__":
                     jobs = Indeed.find_client_or_source_jobs(client_name, False, True)
                 else:
                     jobs = Indeed.find_client_or_source_jobs(client_name)
-                pretty_print(jobs)
+                pprint.pprint(jobs, sort_dicts=False, underscore_numbers=True)
+
+                write = input(
+                    "Do you want to save the results to a file? (y/n): "
+                ).lower()
+                if write == "y":
+                    # write the jobs as a csv file with each job as a row and the keys in the dictionary as columns
+                    with open(f"{client_name}_jobs.csv", "w") as f:
+                        headers = jobs[0].keys()
+                        f.write(",".join(headers) + "\n")
+                        for job in jobs:
+                            for k, v in job.items():
+                                # remove any commas in the values
+                                v = v.replace(",", "")
+                                f.write(f"{v},")
+                            f.write("\n")
+
+                else:
+                    print("Exiting...")
+                    sys.exit(1)
+
             except IndexError:
                 print("Please provide a client name")
         elif option.lower() == "ref":
