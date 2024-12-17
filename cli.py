@@ -21,8 +21,8 @@ def write_csv(client_name, jobs):
 
 
 if __name__ == "__main__":
-
     Indeed = IndeedFeed()
+
     # ask_write()
 
     try:
