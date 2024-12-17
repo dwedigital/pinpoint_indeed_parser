@@ -1,8 +1,16 @@
-import requests
-from lxml import etree
+"""_summary_
+
+Main module used for separating the IndeedFeed class logic from any script or CLI that uses it
+
+"""
+
 from datetime import datetime
 import glob
 import os
+import xml.etree.ElementTree as etree
+
+import requests
+
 from dotenv import load_dotenv
 from progress.spinner import PixelSpinner
 
@@ -10,6 +18,11 @@ load_dotenv()
 
 
 class IndeedFeed:
+    """_summary_
+    This class is responsible for downloading the Indeed feed and parsing
+    it to find jobs for a specific client
+    """
+
     def __init__(self, test=False):
         self.url = os.getenv("INDEED_FEED_URL")
         self.test_file_path = "mock_indeed_feed.xml"
@@ -34,7 +47,7 @@ class IndeedFeed:
             return
 
     def find_client_or_source_jobs(
-        self, client_name=None, fuzzy_search=False, sourceName=False
+        self, client_name=None, fuzzy_search=False, source_name=False
     ) -> list:
         """_summary_
 
@@ -54,7 +67,7 @@ class IndeedFeed:
         for job in root.iter("job"):
             if fuzzy_search:
                 # Search by source name
-                if sourceName:
+                if source_name:
                     if (
                         client_name.lower() in job.find("sourcename").text.lower()
                         or client_name.lower()
@@ -78,7 +91,7 @@ class IndeedFeed:
 
             else:
                 # Use exact match in searching (still case insensitive)
-                if sourceName:
+                if source_name:
                     if client_name.lower() == job.find("sourcename").text.lower():
                         jobs.append(self.__pluck_simple(job))
 
