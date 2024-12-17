@@ -25,7 +25,14 @@ class TestIndeed(unittest.TestCase):
     def test_feed_stats(self):
         indeedFeed = IndeedFeed(test=True)
         stats = indeedFeed.feed_stats()
-        self.assertEqual(stats, {"Total Jobs": 13396, "Number of clients": 1205})
+        self.assertEqual(
+            stats,
+            {
+                "Number of clients/brands": 1205,
+                "Number of sources": 592,
+                "Total Jobs": 13396,
+            },
+        )
 
     # test the find_job_by_reference method
     def test_find_job_by_reference(self):

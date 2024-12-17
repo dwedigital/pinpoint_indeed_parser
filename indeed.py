@@ -17,17 +17,18 @@ class IndeedFeed:
         self.write_feed()
 
     def write_feed(self):
+        """The main function that handles logic for whether to download a new feed or not"""
 
         if self.__need_new_feed():
-            with PixelSpinner("Processing XML    ") as bar:
+            with PixelSpinner("Processing XML    ") as spinner:
                 self.__clean_up_files()
-                response = requests.get(self.url, stream=True)
+                response = requests.get(self.url, stream=True, timeout=20)
                 current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
                 with open(f"indeed_feed_{current_time}.xml", "wb") as f:
                     for chunk in response.iter_content(chunk_size=1024 * 1024):
                         f.write(chunk)
-                        bar.next()
+                        spinner.next()
 
         else:
             return
@@ -35,6 +36,16 @@ class IndeedFeed:
     def find_client_or_source_jobs(
         self, client_name=None, fuzzy_search=False, sourceName=False
     ) -> list:
+        """_summary_
+
+        Args:
+            client_name (_type_, optional): _description_. Defaults to None.
+            fuzzy_search (bool, optional): _description_. Defaults to False.
+            sourceName (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            list: _description_
+        """
 
         jobs = []
 
@@ -77,7 +88,15 @@ class IndeedFeed:
         return jobs
 
     def find_job_by_reference(self, reference) -> dict:
-        # Parse the XML file and find job by reference
+        """_summary_
+        Searches for a job by reference number
+
+        Args:
+            reference (_type_): _description_
+
+        Returns:
+            dict: _description_
+        """
         root = self.__parse_xml()
         for job in root.iter("job"):
             if reference in job.find("referencenumber").text:
@@ -88,12 +107,23 @@ class IndeedFeed:
         return {"message": "Job not found"}
 
     def feed_stats(self):
+        """_summary_
+        Returns the total number of jobs and the number of clients
+
+        Returns:
+            _type_: _description_
+        """
 
         root = self.__parse_xml()
         jobs = root.findall("job")
         return {
             "Total Jobs": len(jobs),
-            "Number of clients": len(set([job.find("company").text for job in jobs])),
+            "Number of clients/brands": len(
+                set([job.find("company").text for job in jobs])
+            ),
+            "Number of sources": len(
+                set([job.find("sourcename").text for job in jobs])
+            ),
         }
 
     def __parse_xml(self):
@@ -101,19 +131,17 @@ class IndeedFeed:
             tree = etree.parse(self.test_file_path)
             root = tree.getroot()
             return root
-
+        # Find the file with the latest date
+        files = glob.glob("indeed_feed_*.xml")
+        if files:
+            latest_file = max(files, key=os.path.getctime)
         else:
-            # Find the file with the latest date
+            self.write_feed()
             files = glob.glob("indeed_feed_*.xml")
-            if files:
-                latest_file = max(files, key=os.path.getctime)
-            else:
-                self.write_feed()
-                files = glob.glob("indeed_feed_*.xml")
-                latest_file = max(files, key=os.path.getctime)
-            tree = etree.parse(latest_file)
-            root = tree.getroot()
-            return root
+            latest_file = max(files, key=os.path.getctime)
+        tree = etree.parse(latest_file)
+        root = tree.getroot()
+        return root
 
     def __clean_up_files(self):
         # get an array of any files with the following format: indeed_feed_*.xml
