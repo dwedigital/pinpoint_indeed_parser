@@ -1,3 +1,4 @@
+# pylint: skip-file
 """
 Simple script to find jobs for a list of client sub-brands and write them to a CSV file.
 """

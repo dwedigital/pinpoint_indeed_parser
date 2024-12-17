@@ -27,4 +27,5 @@ jobs:
       - name: Install linting dependencies
         run: pip install pylint
       - name: Analysing the code with pylint
-        run: pylint $(git ls-files '*.py') --ignore=client_brands.py, test_indeed.py
+        run: |
+          pylint $(git ls-files '*.py') --ignore=client_brands.py, test_indeed.py

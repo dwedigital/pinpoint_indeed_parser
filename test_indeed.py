@@ -1,3 +1,4 @@
+# pylint: skip-file
 import unittest
 from indeed import IndeedFeed
 import glob
