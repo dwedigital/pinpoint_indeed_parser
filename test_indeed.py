@@ -2,7 +2,6 @@ import unittest
 from indeed import IndeedFeed
 import glob
 import os
-from lxml import etree as ElementTree
 
 
 class TestIndeed(unittest.TestCase):
