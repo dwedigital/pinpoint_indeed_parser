@@ -4,6 +4,7 @@ from datetime import datetime
 import glob
 import os
 from dotenv import load_dotenv
+from progress.spinner import PixelSpinner
 
 load_dotenv()
 
@@ -18,13 +19,16 @@ class IndeedFeed:
     def write_feed(self):
 
         if self.__need_new_feed():
-            self.__clean_up_files()
-            response = requests.get(self.url, stream=True)
-            current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+            with PixelSpinner("Processing XML    ") as bar:
+                self.__clean_up_files()
+                response = requests.get(self.url, stream=True)
+                current_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
-            with open(f"indeed_feed_{current_time}.xml", "wb") as f:
-                for chunk in response.iter_content(chunk_size=1024 * 1024):
-                    f.write(chunk)
+                with open(f"indeed_feed_{current_time}.xml", "wb") as f:
+                    for chunk in response.iter_content(chunk_size=1024 * 1024):
+                        f.write(chunk)
+                        bar.next()
+
         else:
             return
 
