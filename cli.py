@@ -5,6 +5,21 @@ import sys
 import pprint
 
 
+def write_csv(client_name, jobs):
+    client_name = client_name.replace(" ", "_")
+    # write the jobs as a csv file with each job as a row and the keys in the dictionary as columns
+    with open(f"{client_name}_jobs.csv", "w") as f:
+        headers = jobs[0].keys()
+        f.write(",".join(headers) + "\n")
+        for job in jobs:
+            for k, v in job.items():
+                # remove any commas in the values ottherwise they will be treated as separate columns
+                v = v.replace(",", "")
+                f.write(f"{v},")
+            # add a new line after each job to create a new row
+            f.write("\n")
+
+
 if __name__ == "__main__":
 
     Indeed = IndeedFeed()
@@ -38,17 +53,7 @@ if __name__ == "__main__":
                     "Do you want to save the results to a file? (y/n): "
                 ).lower()
                 if write == "y":
-                    # write the jobs as a csv file with each job as a row and the keys in the dictionary as columns
-                    with open(f"{client_name}_jobs.csv", "w") as f:
-                        headers = jobs[0].keys()
-                        f.write(",".join(headers) + "\n")
-                        for job in jobs:
-                            for k, v in job.items():
-                                # remove any commas in the values ottherwise they will be treated as separate columns
-                                v = v.replace(",", "")
-                                f.write(f"{v},")
-                            # add a new line after each job to create a new row
-                            f.write("\n")
+                    write_csv(client_name, jobs)
 
                 else:
                     print("Exiting...")
