@@ -1,19 +1,27 @@
-# Description: Command line interface for the IndeedFeed
+"""
+CLI script that uses the IndeedFeed class to search for jobs by client name or reference number
+"""
 
-from indeed import IndeedFeed
 import sys
 import pprint
+from indeed import IndeedFeed
 
 
-def write_csv(client_name, jobs):
-    client_name = client_name.replace(" ", "_")
-    # write the jobs as a csv file with each job as a row and the keys in the dictionary as columns
-    with open(f"{client_name}_jobs.csv", "w") as f:
-        headers = jobs[0].keys()
+def write_csv(client, job_list):
+    """_summary_
+
+    Args:
+        client_name (_type_): _description_
+        jobs (_type_): _description_
+    """
+    client = client.replace(" ", "_")
+    # write the jobs as a csv file with each job as a row
+    with open(f"{client}_jobs.csv", "w", encoding=str) as f:
+        headers = job_list[0].keys()
         f.write(",".join(headers) + "\n")
-        for job in jobs:
-            for k, v in job.items():
-                # remove any commas in the values ottherwise they will be treated as separate columns
+        for j in job_list:
+            for v in j.values():
+                # remove any commas in the values ottherwise
                 v = v.replace(",", "")
                 f.write(f"{v},")
             # add a new line after each job to create a new row
@@ -32,9 +40,9 @@ if __name__ == "__main__":
             jobs = []
             try:
                 client_name = input("Enter client name: ").lower()
-                # Fuzzy search means that the client name can be a substring of the company/source name
+                # Fuzzy search
                 search_type = input("Do you want to do a fuzzy search? (y/n): ").lower()
-                # Client type allows us to search by indivudal client or source (useful if our client is a RPO/Recruiter with multiple clients)
+                # Client type allows us to search by indivudal client or source
                 client_type = input(
                     "Do you want to search by source name? (y/n): "
                 ).lower()
