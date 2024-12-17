@@ -4,26 +4,29 @@ on:
   pull_request:
     branches:
       - develop
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9","3.10"]
+        python-version: ["3.9", "3.10"]
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install repo dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Install linting dependencies
-      run: |
-        pip install pylint
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py') --ignore=client_brands.py, test_indeed.py
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install repo dependencies
+        run: |
+          python -m pip3 install --upgrade pip
+          pip3 install -r requirements.txt
+      - name: Install linting dependencies
+        run: |
+          pip3 install pylint
+      - name: Analysing the code with pylint
+        run: |
+          pylint $(git ls-files '*.py') --ignore=client_brands.py, test_indeed.py
