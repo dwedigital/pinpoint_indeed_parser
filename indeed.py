@@ -43,9 +43,6 @@ class IndeedFeed:
                         f.write(chunk)
                         spinner.next()
 
-        else:
-            return
-
     def find_client_or_source_jobs(
         self, client_name=None, fuzzy_search=False, source_name=False
     ) -> list:
@@ -131,12 +128,8 @@ class IndeedFeed:
         jobs = root.findall("job")
         return {
             "Total Jobs": len(jobs),
-            "Number of clients/brands": len(
-                set([job.find("company").text for job in jobs])
-            ),
-            "Number of sources": len(
-                set([job.find("sourcename").text for job in jobs])
-            ),
+            "Number of clients/brands": len({job.find("company").text for job in jobs}),
+            "Number of sources": len({job.find("sourcename").text for job in jobs}),
         }
 
     def __parse_xml(self):

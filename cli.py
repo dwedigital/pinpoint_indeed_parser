@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 else:
                     jobs = Indeed.find_client_or_source_jobs(client_name)
 
-                pprint.pprint(jobs, sort_dicts=False, underscore_numbers=True)
+                pprint.pprint(jobs, sort_dicts=False)
 
                 write = input(
                     "Do you want to save the results to a file? (y/n): "
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             try:
                 reference = input("Enter reference number: ").lower()
                 job = Indeed.find_job_by_reference(reference)
-                pprint.pprint(job, sort_dicts=False, underscore_numbers=True)
+                pprint.pprint(job, sort_dicts=False)
             except IndexError:
                 print("Please provide a reference number")
 
