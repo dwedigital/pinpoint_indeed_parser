@@ -20,21 +20,20 @@ Install requirements:
 
 The main script is `cli.py` this is what you will run from the command line and search for a client or a job reference
 
-```bash
-# Looks up a client name and will ask if you want to use fuzzy search and search as client or source name
+There are 2 "options" when running the script:
 
-python3 cli.py client
+1. `python3 cli.py client` - will allow you to search source name or client name
+2. `python3 cli.py ref` - will ask you for the reference ID of a particular job. Useful for debugging a specific job as provides a lot more info on one job
 
-# after running the above you will be asked the client name. Once run you also have the option to exprt the jobs to a CSV that will save in the folder of the script
+### Client search
 
----
+You will get asked if you want to use fuzzy search. 9 times out of 10 you likely will as this will look to see if your entered term/phrase is in the source name or client name as well as checking with or without spaces.
 
-# Find a sepcific job and more detailed listing by job reference - good for debugging
+Sometimes if you are not finding a client you are 90% should be in there try doing more generic term i.e. `JSI` instead of `JSItel`.
 
-python3 cli.py ref
-```
+If the results contain other companies then you likely do not want to use fuzzy search and then just search for the exact client/source name (case insensitve)
 
-### `client_brands.py`
+## `client_brands.py`
 
 `client_brands.py` is a useful script if we are asked to look through a load of sub brands for one client and return all the jobs we can find for them.
 
