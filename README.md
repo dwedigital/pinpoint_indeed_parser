@@ -33,3 +33,10 @@ python3 cli.py client
 
 python3 cli.py ref
 ```
+
+### `client_brands.py`
+
+`client_brands.py` is a useful script if we are asked to look through a load of sub brands for one client and return all the jobs we can find for them.
+
+1. You will need to update the array of brands with a list of comma seperated strings for each brand
+2. Update the `client_name` varaible with a string containg the name of the client for use in file naming of the CSV export
