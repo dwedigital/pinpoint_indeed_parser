@@ -6,7 +6,6 @@ import os
 
 
 class TestIndeed(unittest.TestCase):
-
     # Test the request for the feed and file creation first
     def test_write_and_parse_feed(self):
         self.maxDiff = None
@@ -36,7 +35,6 @@ class TestIndeed(unittest.TestCase):
 
     # test the find_job_by_reference method
     def test_find_job_by_reference(self):
-
         indeedFeed = IndeedFeed(test=True)
         job = indeedFeed.find_job_by_reference("8330")
         print(job)
