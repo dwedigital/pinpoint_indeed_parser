@@ -1,0 +1,10 @@
+exclude = ["venv", ".pyenv", "test_indeed.py"]
+
+[lint]
+extend-select = [
+  "UP", # pyupgrade
+  "D",  # pydocstyle
+]
+
+[lint.pydocstyle]
+convention = "google"
