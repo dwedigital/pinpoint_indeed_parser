@@ -1,6 +1,4 @@
-"""
-CLI script that uses the IndeedFeed class to search for jobs by client name or reference number
-"""
+"""CLI script that uses the IndeedFeed class to search for jobs by client name or reference number."""
 
 import sys
 import pprint
@@ -8,11 +6,14 @@ from indeed import IndeedFeed
 
 
 def write_csv(client, job_list):
-    """_summary_
+    """Helper function to write the jobs to a csv file.
 
     Args:
-        client_name (_type_): _description_
-        jobs (_type_): _description_
+        client (_type_): _description_
+        job_list (_type_): _description_
+
+    Returns:
+        None
     """
     client = client.replace(" ", "_")
     # write the jobs as a csv file with each job as a row

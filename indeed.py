@@ -1,8 +1,4 @@
-"""_summary_
-
-Main module used for separating the IndeedFeed class logic from any script or CLI that uses it
-
-"""
+"""Main module used for separating the IndeedFeed class logic from any script or CLI that uses it."""
 
 from datetime import datetime
 import glob
@@ -18,20 +14,17 @@ load_dotenv()
 
 
 class IndeedFeed:
-    """_summary_
-    This class is responsible for downloading the Indeed feed and parsing
-    it to find jobs for a specific client
-    """
+    """This class is responsible for downloading the Indeed feed and parsing it to find jobs for a specific client."""
 
     def __init__(self, test=False):
+        """Sets up the class with the necessary variables and calls the write_feed method."""
         self.url = os.getenv("INDEED_FEED_URL")
         self.test_file_path = "mock_indeed_feed.xml"
         self.test = test
         self.write_feed()
 
     def write_feed(self):
-        """The main function that handles logic for whether to download a new feed or not"""
-
+        """The main function that handles logic for whether to download a new feed or not."""
         if self.__need_new_feed():
             with PixelSpinner("Processing XML    ") as spinner:
                 self.__clean_up_files()
@@ -46,17 +39,16 @@ class IndeedFeed:
     def find_client_or_source_jobs(
         self, client_name=None, fuzzy_search=False, source_name=False
     ) -> list:
-        """_summary_
+        """Method to find jobs based on client name or source name.
 
         Args:
             client_name (_type_, optional): _description_. Defaults to None.
             fuzzy_search (bool, optional): _description_. Defaults to False.
-            sourceName (bool, optional): _description_. Defaults to False.
+            source_name (bool, optional): _description_. Defaults to False.
 
         Returns:
-            list: _description_
+            list: list of jobs
         """
-
         jobs = []
 
         # Parse the XML file and find jobs for the client
@@ -76,7 +68,6 @@ class IndeedFeed:
 
                 # Search by company name
                 else:
-
                     if (
                         client_name.lower() in job.find("company").text.lower()
                         or client_name.lower()
@@ -98,8 +89,7 @@ class IndeedFeed:
         return jobs
 
     def find_job_by_reference(self, reference) -> dict:
-        """_summary_
-        Searches for a job by reference number
+        """Searches for a job by reference number.
 
         Args:
             reference (_type_): _description_
@@ -117,13 +107,11 @@ class IndeedFeed:
         return {"message": "Job not found"}
 
     def feed_stats(self):
-        """_summary_
-        Returns the total number of jobs and the number of clients
+        """Returns the total number of jobs and the number of clients.
 
         Returns:
             _type_: _description_
         """
-
         root = self.__parse_xml()
         jobs = root.findall("job")
         return {

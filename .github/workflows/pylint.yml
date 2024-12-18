@@ -25,7 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Install linting dependencies
-        run: pip install pylint
-      - name: Analysing the code with pylint
+        run: pip install ruff
+      - name: Analysing the code with Ruff
         run: |
-          pylint $(git ls-files '*.py') --ignore=client_brands.py, test_indeed.py
+          ruff check
+      - name: Format the code with Ruff
+        run: |
+          ruff format
