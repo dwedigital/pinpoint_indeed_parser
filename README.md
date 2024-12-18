@@ -20,10 +20,11 @@ Install requirements:
 
 The main script is `cli.py` this is what you will run from the command line and search for a client or a job reference
 
-There are 2 "options" when running the script:
+There are 3 "options" when running the script:
 
 1. `python3 cli.py client` - will allow you to search source name or client name
 2. `python3 cli.py ref` - will ask you for the reference ID of a particular job. Useful for debugging a specific job as provides a lot more info on one job
+3. `python3 cli.py` - with no options this will just return topline stats (number of jobs, sub-brands and companies in the feed)
 
 Each time `cli.py` is run it will check the created time of the `indeed_feed_{date_time}.xml` file. If it does not exist or is older than 1 hour it will re-download and parse the feed and save a new XML file in your working directory. **This can take c. 2 mins longer**
 
