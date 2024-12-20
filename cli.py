@@ -17,7 +17,8 @@ def write_csv(client, job_list):
     """
     client = client.replace(" ", "_")
     # write the jobs as a csv file with each job as a row
-    with open(f"{client}_jobs.csv", "w", encoding=str) as f:
+    print(type(client))
+    with open(f"{client}_jobs.csv", "w") as f:
         headers = job_list[0].keys()
         f.write(",".join(headers) + "\n")
         for j in job_list:
