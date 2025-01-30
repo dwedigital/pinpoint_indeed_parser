@@ -44,3 +44,7 @@ If the results contain other companies then you likely do not want to use fuzzy 
 
 1. You will need to update the array of brands with a list of comma seperated strings for each brand
 2. Update the `client_name` varaible with a string containg the name of the client for use in file naming of the CSV export
+
+## Tests
+
+There are some basic tests that can be run by using `pytest -v` to check if all is working as expected. Make sure you are in a active virtual env
