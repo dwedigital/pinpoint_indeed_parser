@@ -36,6 +36,8 @@ Sometimes if you are not finding a client you are 90% should be in there try doi
 
 If the results contain other companies then you likely do not want to use fuzzy search and then just search for the exact client/source name (case insensitve)
 
+`source name` = the actual Pinpoint instance name (will typically be the main client name we know). This is useful is a clint had multiple themse which are seen as sub brands so we me have ACME (as a srouce name) with 3 jobs as `Company:ACME A` and 5 jobs as `Company:ACME B` but all will have `Source:ACME`
+
 ## `client_brands.py`
 
 `client_brands.py` is a useful script if we are asked to look through a load of sub brands for one client and return all the jobs we can find for them.
