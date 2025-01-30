@@ -22,7 +22,7 @@ The main script is `cli.py` this is what you will run from the command line and 
 
 There are 3 "options" when running the script:
 
-1. `python3 cli.py client` - will allow you to search source name or client name
+1. `python3 cli.py client` - will allow you to search source name or client name. You can also save the client job lists as a CSV at the end
 2. `python3 cli.py ref` - will ask you for the reference ID of a particular job. Useful for debugging a specific job as provides a lot more info on one job
 3. `python3 cli.py` - with no options this will just return topline stats (number of jobs, sub-brands and companies in the feed)
 
