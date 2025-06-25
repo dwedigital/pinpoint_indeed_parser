@@ -1,7 +1,8 @@
 """CLI script that uses the IndeedFeed class to search for jobs by client name or reference number."""
 
-import sys
 import pprint
+import sys
+
 from indeed import IndeedFeed
 
 
@@ -74,7 +75,13 @@ if __name__ == "__main__":
         elif option.lower() == "ref":
             try:
                 reference = input("Enter reference number: ").lower()
-                job = Indeed.find_job_by_reference(reference)
+                job_description = input(
+                    "Do you want to include job desciription? (y/n) "
+                ).lower()
+
+                job = Indeed.find_job_by_reference(
+                    reference, job_description=True if job_description == "y" else False
+                )
                 pprint.pprint(job, sort_dicts=False)
             except IndexError:
                 print("Please provide a reference number")

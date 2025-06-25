@@ -1,12 +1,11 @@
 """Main module used for separating the IndeedFeed class logic from any script or CLI that uses it."""
 
-from datetime import datetime
 import glob
 import os
 import xml.etree.ElementTree as etree
+from datetime import datetime
 
 import requests
-
 from dotenv import load_dotenv
 from progress.spinner import PixelSpinner
 
@@ -88,7 +87,7 @@ class IndeedFeed:
 
         return jobs
 
-    def find_job_by_reference(self, reference) -> dict:
+    def find_job_by_reference(self, reference, job_description=False) -> dict:
         """Searches for a job by reference number.
 
         Args:
@@ -102,7 +101,7 @@ class IndeedFeed:
             if reference in job.find("referencenumber").text:
                 print("found")
 
-                return self.__pluck_full(job)
+                return self.__pluck_full(job, job_description=job_description)
 
         return {"message": "Job not found"}
 
@@ -179,7 +178,7 @@ class IndeedFeed:
             ),
         }
 
-    def __pluck_full(self, job) -> dict:
+    def __pluck_full(self, job, job_description=False) -> dict:
         return {
             "Company": (
                 job.find("company").text if job.find("company") is not None else ""
@@ -192,6 +191,27 @@ class IndeedFeed:
             "Job Title": (
                 job.find("title").text if job.find("title") is not None else ""
             ),
+            "Requisition ID": (
+                job.find("requisitionid").text
+                if job.find("requisitionid") is not None
+                else ""
+            ),
+            "URL": (job.find("url").text if job.find("url") is not None else ""),
+            "Street Adress": (
+                job.find("streetaddress").text
+                if job.find("streetaddress") is not None
+                else ""
+            ),
+            "City": (job.find("city").text if job.find("city") is not None else ""),
+            "State": (job.find("state").text if job.find("state") is not None else ""),
+            "Country": (
+                job.find("country").text if job.find("country") is not None else ""
+            ),
+            "Postal Code": (
+                job.find("postalcode").text
+                if job.find("postalcode") is not None
+                else ""
+            ),
             "Salary": (
                 job.find("salary").text if job.find("salary") is not None else ""
             ),
@@ -199,7 +219,9 @@ class IndeedFeed:
                 job.find("description").text
                 if job.find("description") is not None
                 else ""
-            ),
+            )
+            if job_description
+            else "NOT INCLUDED",
             "Email": (job.find("email").text if job.find("email") is not None else ""),
             "Apply Data": (
                 job.find("indeed-apply-data").text
