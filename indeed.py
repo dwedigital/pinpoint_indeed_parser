@@ -92,6 +92,7 @@ class IndeedFeed:
 
         Args:
             reference (_type_): _description_
+            job_description (bool, optional): _description_. Defaults to False.
 
         Returns:
             dict: _description_
