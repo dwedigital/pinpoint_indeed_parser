@@ -59,6 +59,7 @@ if __name__ == "__main__":
                     jobs = Indeed.find_client_or_source_jobs(client_name)
 
                 pprint.pprint(jobs, sort_dicts=False)
+                print("Number of jobs: ",len(jobs))
 
                 write = input(
                     "Do you want to save the results to a file? (y/n): "
@@ -68,7 +69,7 @@ if __name__ == "__main__":
 
                 else:
                     print("Exiting...")
-                    sys.exit(1)
+                    sys.exit()
 
             except IndexError:
                 print("Please provide a client name")
@@ -88,4 +89,4 @@ if __name__ == "__main__":
 
     except IndexError:
         print(Indeed.feed_stats())
-        sys.exit(1)
+        sys.exit()
