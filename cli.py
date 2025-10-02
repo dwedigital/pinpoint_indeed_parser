@@ -2,6 +2,7 @@
 
 import pprint
 import sys
+import json
 
 from indeed import IndeedFeed
 
@@ -88,5 +89,5 @@ if __name__ == "__main__":
                 print("Please provide a reference number")
 
     except IndexError:
-        print(Indeed.feed_stats())
+        print(json.dumps(Indeed.feed_stats(), indent=4))
         sys.exit()

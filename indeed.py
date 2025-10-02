@@ -112,12 +112,17 @@ class IndeedFeed:
         Returns:
             _type_: _description_
         """
+        source_names = set()
         root = self.__parse_xml()
         jobs = root.findall("job")
+        for job in jobs:
+            if job.find("sourcename") is not None:
+                source_names.add(job.find("sourcename").text)
         return {
             "Total Jobs": len(jobs),
             "Number of clients/brands": len({job.find("company").text for job in jobs}),
             "Number of sources": len({job.find("sourcename").text for job in jobs}),
+            "Unique Source Names": sorted(source_names),
         }
 
     def __parse_xml(self):
